@@ -1,5 +1,6 @@
 package uk.doneby.igt.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import uk.doneby.igt.model.Product;
 import uk.doneby.igt.model.User;
@@ -46,24 +45,33 @@ public class ProductController {
 	@ResponseBody
     public ResponseEntity<List<Product>> getUserProducts() {
 		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<Product> products =  productRepository.findByUserId(user.getId());
+//    	List<UserProduct> userProducts =  userProductRepository.findByUser(user);
+//    	List<Product> products = new ArrayList<Product>();
+//    	if (userProducts != null) {
+//    		for(UserProduct userProduct : userProducts) {
+//        		Product product = userProduct.getProduct();
+//        		product.setQuantity(userProduct.getQuantity());
+//        		products.add(product);
+//        	}
+//    	}
+		List<Product> products = productRepository.findByUserId(user.getId());
     	return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
     }
 	
 	@PostMapping("/add")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Product>  saveNewProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> saveNewProduct(@RequestBody Product product) {
     	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	product = productRepository.save(product);
-    	UserProduct userProduct = new UserProduct(user, product, 1L); 
+    	UserProduct userProduct = new UserProduct(user, product, product.getQuantity()); 
     	userProductRepository.save(userProduct);
-    	return new ResponseEntity<Product>(product, HttpStatus.OK);
+    	return new ResponseEntity<Product>(product, HttpStatus.OK);// /api/product/add
+    	
     }
 	
 	@DeleteMapping("/remove-user/{productId}")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Boolean> removeUserProduct(@PathVariable("productId") Long productId) {
-		System.out.println(1234567);
     	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	UserProductId id = new UserProductId(user.getId(), productId);
     	userProductRepository.delete(id);
@@ -73,7 +81,7 @@ public class ProductController {
 	@PutMapping("/save")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public Product updateProduct(@RequestBody Product product) {
-    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	product = productRepository.save(product);
     	return product;
     }

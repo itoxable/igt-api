@@ -1,5 +1,6 @@
 package uk.doneby.igt.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -49,14 +50,22 @@ public class RecipeController {
 	@GetMapping("/user")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public List<Recipe> getUserRecipes() {
-    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	return recipeRepository.findByUser(user);
+    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();  	
+    	List<Recipe> recipes = recipeRepository.findByUser(user);
+		if (recipes == null) {
+			recipes = new ArrayList<Recipe>();
+		}
+    	return recipes;
     }
 	
 	@GetMapping("/featured")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public List<Recipe> getFeaturedRecipes() {
-    	return recipeRepository.findByFeatured();
+		List<Recipe> recipes = recipeRepository.findByFeatured();
+		if (recipes == null) {
+			recipes = new ArrayList<Recipe>();
+		}
+    	return recipes;
     }
 	
 	

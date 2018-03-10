@@ -31,7 +31,7 @@ public class UserProduct implements Serializable {
 	private Product product;
 	
 	@Column(name="QUANTITY")
-	private Long quantity;
+	private String quantity;
 	
 	@Column(name = "CDATE", nullable = false)
 	private Date cdate;
@@ -39,18 +39,25 @@ public class UserProduct implements Serializable {
 	@Column(name = "MDATE", nullable = false)
 	private Date mdate;
 	
-	public UserProduct() {}
-	
-	public UserProduct(User user, Product product) {
-		this(user, product, 1L);
+	public UserProduct() {
+		System.out.println("******UserProduct");
 	}
 	
-	public UserProduct(User user, Product product, Long quantity) {
+	public UserProduct(User user, Product product) {
+		this(user, product, "1");
+		System.out.println("******UserProduct");
+
+	}
+	
+	public UserProduct(User user, Product product, String quantity) {
 		this.user = user;
 		this.product = product;
 		this.quantity = quantity;
 		
 		id = new UserProductId(user.getId(), product.getId());
+		
+		System.out.println("******UserProductfdeafeasf");
+
 	}
 	
 	@PrePersist
@@ -78,18 +85,22 @@ public class UserProduct implements Serializable {
 	}
 
 	public Product getProduct() {
+		System.out.println("******getProduct");
+
 		return product;
 	}
 
 	public void setProduct(Product product) {
+		System.out.println("******setProduct");
+
 		this.product = product;
 	}
 
-	public Long getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Long quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 

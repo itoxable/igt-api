@@ -33,32 +33,9 @@ public class Product extends BaseModel implements Serializable {
     )
     private List<RecipeProduct> recipeProduct = new ArrayList<RecipeProduct>();
 	
-	@Column(name="CALORIES")
-	private String calories;
-	
-	@Column(name="CARBS")
-	private String carbs;
-	
-	@Column(name="UNSATURATED_FAT")
-	private String unsaturatedFat;
-	
-	@Column(name="SATURATED_FAT")
-	private String saturatedFat;
-	
-	@Column(name="polyunsaturated_Fat")
-	private String polyunsaturatedFat;
-	
-	@Column(name="Trans_Fat")
-	private String transFat;
-	
-	@Column(name="proteins")
-	private String proteins;
-	
-	@Column(name="vitamins")
-	private String vitamins;
-	
+
 	@Transient
-	private Long quantity = 1L;
+	private String quantity = "1";
 
 	public String getName() {
 		return name;
@@ -84,71 +61,6 @@ public class Product extends BaseModel implements Serializable {
 		this.image = image;
 	}
 
-
-	public String getCalories() {
-		return calories;
-	}
-
-	public void setCalories(String calories) {
-		this.calories = calories;
-	}
-
-	public String getCarbs() {
-		return carbs;
-	}
-
-	public void setCarbs(String carbs) {
-		this.carbs = carbs;
-	}
-
-	public String getUnsaturatedFat() {
-		return unsaturatedFat;
-	}
-
-	public void setUnsaturatedFat(String unsaturatedFat) {
-		this.unsaturatedFat = unsaturatedFat;
-	}
-
-	public String getSaturatedFat() {
-		return saturatedFat;
-	}
-
-	public void setSaturatedFat(String saturatedFat) {
-		this.saturatedFat = saturatedFat;
-	}
-
-	public String getPolyunsaturatedFat() {
-		return polyunsaturatedFat;
-	}
-
-	public void setPolyunsaturatedFat(String polyunsaturatedFat) {
-		this.polyunsaturatedFat = polyunsaturatedFat;
-	}
-
-	public String getTransFat() {
-		return transFat;
-	}
-
-	public void setTransFat(String transFat) {
-		this.transFat = transFat;
-	}
-
-	public String getProteins() {
-		return proteins;
-	}
-
-	public void setProteins(String proteins) {
-		this.proteins = proteins;
-	}
-
-	public String getVitamins() {
-		return vitamins;
-	}
-
-	public void setVitamins(String vitamins) {
-		this.vitamins = vitamins;
-	}
-
 	public List<RecipeProduct> getRecipeProduct() {
 		return recipeProduct;
 	}
@@ -157,11 +69,11 @@ public class Product extends BaseModel implements Serializable {
 		this.recipeProduct = recipeProduct;
 	}
 
-	public Long getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Long quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 	
