@@ -2,6 +2,7 @@ package uk.doneby.igt.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -36,6 +37,9 @@ public class Product extends BaseModel implements Serializable {
 
 	@Transient
 	private String quantity = "1";
+	
+	@Transient
+	private Date bestBeforeDate;
 
 	public String getName() {
 		return name;
@@ -75,6 +79,14 @@ public class Product extends BaseModel implements Serializable {
 
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
+	}
+
+	public Date getBestBeforeDate() {
+		return bestBeforeDate;
+	}
+
+	public void setBestBeforeDate(Date bestBeforeDate) {
+		this.bestBeforeDate = bestBeforeDate;
 	}
 	
 }

@@ -33,6 +33,9 @@ public class UserProduct implements Serializable {
 	@Column(name="QUANTITY")
 	private String quantity;
 	
+	@Column(name = "BEST_BEFORE_DATE")
+	private Date bestBeforeDate;
+	
 	@Column(name = "CDATE", nullable = false)
 	private Date cdate;
 
@@ -118,6 +121,14 @@ public class UserProduct implements Serializable {
 
 	public void setMdate(Date mdate) {
 		this.mdate = mdate;
+	}
+
+	public Date getBestBeforeDate() {
+		return bestBeforeDate;
+	}
+
+	public void setBestBeforeDate(Date bestBeforeDate) {
+		this.bestBeforeDate = bestBeforeDate;
 	}
 
 	
