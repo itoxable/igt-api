@@ -26,7 +26,7 @@ public class UserProduct implements Serializable {
 	private User user;
 	
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @MapsId("id")
 	private Product product;
 	
@@ -43,12 +43,10 @@ public class UserProduct implements Serializable {
 	private Date mdate;
 	
 	public UserProduct() {
-		System.out.println("******UserProduct");
 	}
 	
 	public UserProduct(User user, Product product) {
 		this(user, product, "1");
-		System.out.println("******UserProduct");
 
 	}
 	
@@ -59,7 +57,7 @@ public class UserProduct implements Serializable {
 		
 		id = new UserProductId(user.getId(), product.getId());
 		
-		System.out.println("******UserProductfdeafeasf");
+		System.out.println(product);
 
 	}
 	
@@ -88,14 +86,14 @@ public class UserProduct implements Serializable {
 	}
 
 	public Product getProduct() {
-		System.out.println("******getProduct");
-
+		product.setQuantity(quantity);
+		product.setBestBeforeDate(bestBeforeDate);
 		return product;
 	}
 
 	public void setProduct(Product product) {
-		System.out.println("******setProduct");
-
+		product.setQuantity(quantity);
+		product.setBestBeforeDate(bestBeforeDate);
 		this.product = product;
 	}
 
@@ -131,6 +129,14 @@ public class UserProduct implements Serializable {
 		this.bestBeforeDate = bestBeforeDate;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Product: '").append(product.toString()).append("', ")
+		.append("User: '").append(user.toString()).append("', ")
+		.append(super.toString());
+		return sb.toString();
+	}
 	
 
 }

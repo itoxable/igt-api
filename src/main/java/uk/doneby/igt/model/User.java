@@ -1,23 +1,18 @@
 package uk.doneby.igt.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -35,28 +30,34 @@ public class User extends BaseModel implements UserDetails, Serializable{
 	@Column(name="USERNAME", nullable = false, unique = false)
 	private String username;
 	
-	@Column(name="nutrition_Type")
-	private String nutritionType;
+	@Column(name="DIET_TYPE")
+	private DietType dietType;
 	
 	@Column(name="LAST_LOGIN")
 	private Date lastLogin;
 	
 	@Column(name="PASSWORD")
+//	@JsonIgnore
 	private String password;
 	
 	@Transient
+	@JsonIgnore
 	private List<GrantedAuthority> authorities;
 	
 	@Transient
+	@JsonIgnore
 	private boolean accountNonExpired = true;
 	
 	@Transient
+	@JsonIgnore
 	private boolean accountNonLocked = true;
 	
 	@Transient
+	@JsonIgnore
 	private boolean credentialsNonExpired = true;
 	
 	@Transient
+	@JsonIgnore
 	private boolean enabled = true;
 	
 
@@ -83,21 +84,13 @@ public class User extends BaseModel implements UserDetails, Serializable{
 	public void setUsername(String username) {
 		this.username = username;
 	}
-//
-//	public List<Product> getProducts() {
-//		return products;
-//	}
-//
-//	public void setProducts(List<Product> products) {
-//		this.products = products;
-//	}
 
-	public String getNutritionType() {
-		return nutritionType;
+	public DietType getDietType() {
+		return dietType;
 	}
 
-	public void setNutritionType(String nutritionType) {
-		this.nutritionType = nutritionType;
+	public void setDietType(DietType dietType) {
+		this.dietType = dietType;
 	}
 
 	public Date getLastLogin() {
@@ -156,11 +149,14 @@ public class User extends BaseModel implements UserDetails, Serializable{
 		this.enabled = enabled;
 	}
 
-//	public List<Recipe> getRecipes() {
-//		return recipes;
-//	}
-//
-//	public void setRecipes(List<Recipe> recipes) {
-//		this.recipes = recipes;
-//	}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("name: '").append(name).append("', ")
+		.append("email: '").append(email).append("', ")
+		.append("username: '").append(username).append("', ")
+		.append("password: '").append(password).append("', ")
+		.append(super.toString());
+		return sb.toString();
+	}
 }

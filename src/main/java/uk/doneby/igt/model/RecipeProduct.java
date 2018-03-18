@@ -28,9 +28,9 @@ public class RecipeProduct implements Serializable {
 	private Product product;
 
 	@Column(name="QUANTITY")
-	private Long quantity;
+	private String quantity;
 	
-	public RecipeProduct(Recipe recipe, Product product, Long quantity) {
+	public RecipeProduct(Recipe recipe, Product product, String quantity) {
 		this.product = product;
 		this.recipe = recipe;
 		this.quantity = quantity;
@@ -52,11 +52,11 @@ public class RecipeProduct implements Serializable {
 		this.product = product;
 	}
 
-	public Long getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Long quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 

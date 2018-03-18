@@ -1,14 +1,10 @@
 package uk.doneby.igt.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -18,7 +14,7 @@ public class Product extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 7971108680024557857L;
 	
-	@Column(name="NAME", nullable = false)
+	@Column(name="NAME", nullable = false, unique=true)
 	private String name;
 	
 	@Column(name="IMAGE")
@@ -26,14 +22,9 @@ public class Product extends BaseModel implements Serializable {
 	
 	@Column(name="DESCRIPTION")
 	private String description;
-
-	@OneToMany(
-        mappedBy = "recipe",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<RecipeProduct> recipeProduct = new ArrayList<RecipeProduct>();
 	
+	@Column(name="BARCODE")
+	private String barCode;
 
 	@Transient
 	private String quantity = "1";
@@ -65,14 +56,6 @@ public class Product extends BaseModel implements Serializable {
 		this.image = image;
 	}
 
-	public List<RecipeProduct> getRecipeProduct() {
-		return recipeProduct;
-	}
-
-	public void setRecipeProduct(List<RecipeProduct> recipeProduct) {
-		this.recipeProduct = recipeProduct;
-	}
-
 	public String getQuantity() {
 		return quantity;
 	}
@@ -87,6 +70,25 @@ public class Product extends BaseModel implements Serializable {
 
 	public void setBestBeforeDate(Date bestBeforeDate) {
 		this.bestBeforeDate = bestBeforeDate;
+	}
+	
+	public String getBarCode() {
+		return barCode;
+	}
+
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("name: '").append(name).append("', ")
+		.append("image: '").append(image).append("', ")
+		.append("quantity: '").append(quantity).append("', ")
+		.append("bestBeforeDate: '").append(bestBeforeDate).append("', ")
+		.append(super.toString());
+		return sb.toString();
 	}
 	
 }

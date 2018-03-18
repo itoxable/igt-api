@@ -1,7 +1,15 @@
 package uk.doneby.igt.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.Column;
+import javax.persistence.Transient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,28 +52,36 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@ResponseBody
     public ResponseEntity<List<Product>> getUserProducts() {
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//    	List<UserProduct> userProducts =  userProductRepository.findByUser(user);
-//    	List<Product> products = new ArrayList<Product>();
-//    	if (userProducts != null) {
-//    		for(UserProduct userProduct : userProducts) {
-//        		Product product = userProduct.getProduct();
-//        		product.setQuantity(userProduct.getQuantity());
-//        		products.add(product);
-//        	}
-//    	}
-		List<Product> products = productRepository.findByUserId(user.getId());
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		List<UserProduct> userProducts =  userProductRepository.findByUser(user);
+		List<Product> products = userProducts.stream().map(userProduct -> userProduct.getProduct()).collect(Collectors.toList());
     	return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+    }
+	
+	@GetMapping("/user-product/{productId}")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
+	@ResponseBody
+    public ResponseEntity<Product> getUserProduct(@PathVariable("productId") Long productId) {
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+    	UserProductId id = new UserProductId(user.getId(), productId);
+    	UserProduct userProduct = userProductRepository.findOne(id);
+    	return new ResponseEntity<Product>(userProduct.getProduct(), HttpStatus.OK);
     }
 	
 	@PostMapping("/add")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Product> saveNewProduct(@RequestBody Product product) {
     	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	product = productRepository.save(product);
+    	Product existingProduct = productRepository.findByName(product.getName());
+    	if(existingProduct == null) {
+    		product = productRepository.save(product);
+    	} else {
+    		product = existingProduct;
+    	}
+    	    	
     	UserProduct userProduct = new UserProduct(user, product, product.getQuantity()); 
-    	userProductRepository.save(userProduct);
-    	return new ResponseEntity<Product>(product, HttpStatus.OK);// /api/product/add
+    	userProduct = userProductRepository.save(userProduct);
+    	return new ResponseEntity<Product>(userProduct.getProduct(), HttpStatus.OK);
     	
     }
 	
@@ -80,10 +96,28 @@ public class ProductController {
 	
 	@PutMapping("/save")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
-    public Product updateProduct(@RequestBody Product product) {
-//    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	product = productRepository.save(product);
-    	return product;
+    public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
+    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Product existingProduct = productRepository.findOne(product.getId());
+    	UserProductId id = new UserProductId(user.getId(), product.getId());
+    	if(!product.getName().equals(existingProduct.getName())) {
+    		Product newProduct = new Product();
+    		newProduct.setName(product.getName());
+    		newProduct.setDescription(product.getDescription());
+    		newProduct.setQuantity(product.getQuantity());
+    		newProduct.setBestBeforeDate(product.getBestBeforeDate());   		
+        	userProductRepository.delete(id);
+    		product = saveNewProduct(newProduct).getBody();
+    	} 
+    	else {
+    		
+    		UserProduct userProduct = userProductRepository.findOne(id);
+    		userProduct.setBestBeforeDate(product.getBestBeforeDate());
+    		userProduct.setQuantity(product.getQuantity());
+    		userProduct = userProductRepository.save(userProduct);
+    		product = userProduct.getProduct();
+    	}
+    	return new ResponseEntity<Product>(product, HttpStatus.OK);
     }
 	
 	@PostMapping("/associate-user")
@@ -93,6 +127,15 @@ public class ProductController {
     	UserProduct userProduct = new UserProduct(user, product, product.getQuantity()); 
     	userProductRepository.save(userProduct);
     	return product;
+    }
+	
+	@PostMapping("/barcode/{code}")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
+    public String barcodeLookup(@PathVariable("productId") String code) {
+//    	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();    	
+//    	UserProduct userProduct = new UserProduct(user, product, product.getQuantity()); 
+//    	userProductRepository.save(userProduct);
+    	return "";
     }
 	
 }

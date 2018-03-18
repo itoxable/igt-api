@@ -98,7 +98,7 @@ public class BaseModel {
 		.append("cdate: '").append(cdate).append("', ")
 		.append("mdate: '").append(mdate).append("', ")
 		.append("createdBy: '").append(createdBy).append("', ")
-		.append("modifiedByUser: '").append(modifiedByUser).append("', ");
+		.append("modifiedByUser: '").append(modifiedByUser).append("', ").append(super.toString());
 
 		return sb.toString();
 	}

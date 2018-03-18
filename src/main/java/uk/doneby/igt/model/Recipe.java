@@ -7,15 +7,11 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Entity
@@ -33,15 +29,11 @@ public class Recipe extends BaseModel implements Serializable {
 	@Column(name="IMAGE")
 	private String image;
 		
-	@OneToMany(
-        mappedBy = "product",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<RecipeProduct> recipeProduct = new ArrayList<RecipeProduct>();
-	
 	@Column(name="DIRECTIONS")
 	private String directions;
+	
+	@Column(name="DIET_TYPE")
+	private DietType dietType;
 	
 	@Column(name="PREPARATION_TIME")
 	private int preparationTime;
@@ -73,13 +65,11 @@ public class Recipe extends BaseModel implements Serializable {
 	@Column(name="FEATURED")
 	private boolean featured;
 	
-	public boolean isFeatured() {
-		return featured;
-	}
-
-	public void setFeatured(boolean featured) {
-		this.featured = featured;
-	}
+	@Transient
+	private MultipartFile imageFile;
+	
+	@Transient
+	private List<Product> products;
 
 	public String getName() {
 		return name;
@@ -96,7 +86,7 @@ public class Recipe extends BaseModel implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public String getImage() {
 		return image;
 	}
@@ -111,6 +101,14 @@ public class Recipe extends BaseModel implements Serializable {
 
 	public void setDirections(String directions) {
 		this.directions = directions;
+	}
+
+	public DietType getDietType() {
+		return dietType;
+	}
+
+	public void setDietType(DietType dietType) {
+		this.dietType = dietType;
 	}
 
 	public int getPreparationTime() {
@@ -185,13 +183,39 @@ public class Recipe extends BaseModel implements Serializable {
 		this.vitamins = vitamins;
 	}
 
-	public List<RecipeProduct> getRecipeProduct() {
-		return recipeProduct;
+	public boolean isFeatured() {
+		return featured;
 	}
 
-	public void setRecipeProduct(List<RecipeProduct> recipeProduct) {
-		this.recipeProduct = recipeProduct;
+	public void setFeatured(boolean featured) {
+		this.featured = featured;
+	}
+
+
+	public MultipartFile getImageFile() {
+		return imageFile;
+	}
+
+	public void setImageFile(MultipartFile imageFile) {
+		this.imageFile = imageFile;
 	}
 	
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("name: '").append(name).append("', ")
+		.append("description: '").append(description).append("', ")
+		.append(super.toString());
+		return sb.toString();
+	}
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
+
 }

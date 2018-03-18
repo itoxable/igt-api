@@ -35,10 +35,13 @@ public class UserRecipe implements Serializable {
 	@Column(name = "MDATE", nullable = false)
 	private Date mdate;
 	
+	private UserRecipe() {}
 	
 	public UserRecipe(User user, Recipe recipe) {
 		this.user = user;
 		this.recipe = recipe;
+		id = new UserRecipeId(user.getId(), recipe.getId());
+
 	}
 	
 	@PrePersist

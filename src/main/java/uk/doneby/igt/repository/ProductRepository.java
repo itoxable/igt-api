@@ -23,6 +23,10 @@ public interface ProductRepository extends CrudRepository<Product, Long>  {
 	@Query("SELECT r.product FROM UserProduct r where r.user.id = :userId")
 	public List<Product> findByUserId(@Param("userId") Long userId);
 	
+	
+//	@Query("SELECT p FROM Product p where p.name = :name")
+	Product findByName(@Param("name") String name);
+	
 	//@RestResource(exported=true)
 //	@Query("SELECT COUNT(b) FROM BasicLandAndPropertyUnit b WHERE b.parentUprn=:parentUprn GROUP BY b.parentUprn")
 //	Long countByParentUprn(@Param("parentUprn") BigDecimal parentUprn);
