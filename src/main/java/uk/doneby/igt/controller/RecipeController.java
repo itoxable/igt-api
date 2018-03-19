@@ -65,13 +65,14 @@ public class RecipeController {
 	
 	@GetMapping("/user")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
-    public List<Recipe> getUserRecipes() {
+    public ResponseEntity<List<Recipe>> getUserRecipes() {
     	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();  	
     	List<Recipe> recipes = recipeRepository.findByUser(user);
 		if (recipes == null) {
 			recipes = new ArrayList<Recipe>();
 		}
-    	return recipes;
+		return new ResponseEntity<List<Recipe>>(recipes, HttpStatus.OK);
+
     }
 	
 	@GetMapping("/featured")

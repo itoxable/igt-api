@@ -36,34 +36,23 @@ public class Recipe extends BaseModel implements Serializable {
 	private DietType dietType;
 	
 	@Column(name="PREPARATION_TIME")
-	private int preparationTime;
+	private Long preparationTime;
 	
-	@Column(name="CALORIES")
-	private String calories;
+	@Column(name="SERVINGS")
+	private int servings;
 	
-	@Column(name="CARBS")
-	private String carbs;
-	
-	@Column(name="UNSATURATED_FAT")
-	private String unsaturatedFat;
-	
-	@Column(name="SATURATED_FAT")
-	private String saturatedFat;
-	
-	@Column(name="POLYUNSATURATED_FAT")
-	private String polyunsaturatedFat;
-	
-	@Column(name="TRANS_FAT")
-	private String transFat;
-	
-	@Column(name="PROTEINS")
-	private String proteins;
-	
-	@Column(name="VITAMINS")
-	private String vitamins;
-	
+//	@OneToMany(mappedBy = "contactRoleCode")
+	@Transient
+	private List<NutritionalInfo> nutritionalInfo;
+		
 	@Column(name="FEATURED")
 	private boolean featured;
+	
+	@Column(name="LIKES")
+	private Long likes;
+	
+	@Column(name="VIEWS")
+	private Long views;
 	
 	@Transient
 	private MultipartFile imageFile;
@@ -111,76 +100,12 @@ public class Recipe extends BaseModel implements Serializable {
 		this.dietType = dietType;
 	}
 
-	public int getPreparationTime() {
+	public Long getPreparationTime() {
 		return preparationTime;
 	}
 
-	public void setPreparationTime(int preparationTime) {
+	public void setPreparationTime(Long preparationTime) {
 		this.preparationTime = preparationTime;
-	}
-
-	public String getCalories() {
-		return calories;
-	}
-
-	public void setCalories(String calories) {
-		this.calories = calories;
-	}
-
-	public String getCarbs() {
-		return carbs;
-	}
-
-	public void setCarbs(String carbs) {
-		this.carbs = carbs;
-	}
-
-	public String getUnsaturatedFat() {
-		return unsaturatedFat;
-	}
-
-	public void setUnsaturatedFat(String unsaturatedFat) {
-		this.unsaturatedFat = unsaturatedFat;
-	}
-
-	public String getSaturatedFat() {
-		return saturatedFat;
-	}
-
-	public void setSaturatedFat(String saturatedFat) {
-		this.saturatedFat = saturatedFat;
-	}
-
-	public String getPolyunsaturatedFat() {
-		return polyunsaturatedFat;
-	}
-
-	public void setPolyunsaturatedFat(String polyunsaturatedFat) {
-		this.polyunsaturatedFat = polyunsaturatedFat;
-	}
-
-	public String getTransFat() {
-		return transFat;
-	}
-
-	public void setTransFat(String transFat) {
-		this.transFat = transFat;
-	}
-
-	public String getProteins() {
-		return proteins;
-	}
-
-	public void setProteins(String proteins) {
-		this.proteins = proteins;
-	}
-
-	public String getVitamins() {
-		return vitamins;
-	}
-
-	public void setVitamins(String vitamins) {
-		this.vitamins = vitamins;
 	}
 
 	public boolean isFeatured() {
@@ -216,6 +141,22 @@ public class Recipe extends BaseModel implements Serializable {
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+
+	public int getServings() {
+		return servings;
+	}
+
+	public void setServings(int servings) {
+		this.servings = servings;
+	}
+
+	public List<NutritionalInfo> getNutritionalInfo() {
+		return nutritionalInfo;
+	}
+
+	public void setNutritionalInfo(List<NutritionalInfo> nutritionalInfo) {
+		this.nutritionalInfo = nutritionalInfo;
 	}
 
 }

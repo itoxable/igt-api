@@ -30,10 +30,14 @@ public class RecipeProduct implements Serializable {
 	@Column(name="QUANTITY")
 	private String quantity;
 	
+	private RecipeProduct() {}
+	
 	public RecipeProduct(Recipe recipe, Product product, String quantity) {
 		this.product = product;
 		this.recipe = recipe;
 		this.quantity = quantity;
+		
+		id = new RecipeProductId(recipe.getId(), product.getId());
 	}
 	
 	public Recipe getRecipe() {

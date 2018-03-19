@@ -37,13 +37,12 @@ public class StorageServiceImpl implements StorageService {
             throw new RuntimeException("Failed to store empty file " + file.getOriginalFilename());
         }
 		
-
-    	Path target = FileSystems.getDefault().getPath(imageFolder).resolve(System.currentTimeMillis()+file.getOriginalFilename().toLowerCase());
+		String fileName = System.currentTimeMillis()+file.getOriginalFilename().toLowerCase();
+    	Path target = FileSystems.getDefault().getPath(imageFolder).resolve(fileName);
 
     	Files.copy(file.getInputStream(), target);
-            
          
-    	return file.getOriginalFilename();
+    	return fileName;
 
 	}
 
@@ -55,8 +54,10 @@ public class StorageServiceImpl implements StorageService {
 
 	@Override
 	public Path load(String filename) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("--------------------------------");
+		System.out.println(imageFolder+"/"+filename);
+		Path target = FileSystems.getDefault().getPath(imageFolder+"/"+filename);
+		return target;
 	}
 
 	@Override
