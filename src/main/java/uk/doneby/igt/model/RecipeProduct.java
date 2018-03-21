@@ -36,7 +36,6 @@ public class RecipeProduct implements Serializable {
 		this.product = product;
 		this.recipe = recipe;
 		this.quantity = quantity;
-		
 		id = new RecipeProductId(recipe.getId(), product.getId());
 	}
 	

@@ -41,7 +41,6 @@ public class Recipe extends BaseModel implements Serializable {
 	@Column(name="SERVINGS")
 	private int servings;
 	
-//	@OneToMany(mappedBy = "contactRoleCode")
 	@Transient
 	private List<NutritionalInfo> nutritionalInfo;
 		
