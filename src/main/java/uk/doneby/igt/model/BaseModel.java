@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public class BaseModel {
-	
+		
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue
@@ -31,11 +31,11 @@ public class BaseModel {
 	
 	@Column(name = "CREATED_BY", nullable = false)
     @CreatedBy
-    private Long createdBy = 0L;
+    private User createdBy;
 	
 	@Column(name = "modified_by", nullable = false)
     @LastModifiedBy
-    private Long modifiedByUser = 0L;
+    private User modifiedByUser;
 	
 	@PrePersist
 	void onCreate() {
@@ -75,19 +75,19 @@ public class BaseModel {
 	
 
 
-	public Long getCreatedBy() {
+	public User  getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(Long createdBy) {
+	public void setCreatedBy(User  createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public Long getModifiedByUser() {
+	public User  getModifiedByUser() {
 		return modifiedByUser;
 	}
 
-	public void setModifiedByUser(Long modifiedByUser) {
+	public void setModifiedByUser(User  modifiedByUser) {
 		this.modifiedByUser = modifiedByUser;
 	}
 	

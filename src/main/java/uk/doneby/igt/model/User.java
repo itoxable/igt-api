@@ -6,6 +6,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -17,9 +23,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="USER")
-public class User extends BaseModel implements UserDetails, Serializable{
+public class User implements UserDetails, Serializable{
 
 	private static final long serialVersionUID = -4276067408950251800L;
+	
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue
+	private Long id;
+	
+	@Column(name = "CDATE", nullable = false)
+	private Date cdate;
 	
 	@Column(name="NAME", nullable = false)
 	private String name;
@@ -39,6 +53,13 @@ public class User extends BaseModel implements UserDetails, Serializable{
 	@Column(name="PASSWORD")
 //	@JsonIgnore
 	private String password;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name="RECIPE_LIKES",
+		joinColumns=@JoinColumn(name="USER_ID", referencedColumnName="ID"),
+		inverseJoinColumns=@JoinColumn(name="RECIPE_ID", referencedColumnName="ID"))
+	private List<Recipe> likedRecipes;
 	
 	@Transient
 	@JsonIgnore
@@ -158,5 +179,29 @@ public class User extends BaseModel implements UserDetails, Serializable{
 		.append("password: '").append(password).append("', ")
 		.append(super.toString());
 		return sb.toString();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getCdate() {
+		return cdate;
+	}
+
+	public void setCdate(Date cdate) {
+		this.cdate = cdate;
+	}
+
+	public List<Recipe> getLikedRecipes() {
+		return likedRecipes;
+	}
+
+	public void setLikedRecipes(List<Recipe> likedRecipes) {
+		this.likedRecipes = likedRecipes;
 	}
 }

@@ -1,10 +1,10 @@
 package uk.doneby.igt.controller;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +21,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import uk.doneby.igt.model.NutritionalInfo;
 import uk.doneby.igt.model.Product;
 import uk.doneby.igt.model.Recipe;
+import uk.doneby.igt.model.RecipeNutritionalInfo;
 import uk.doneby.igt.model.RecipeProduct;
 import uk.doneby.igt.model.User;
-import uk.doneby.igt.model.UserProduct;
-import uk.doneby.igt.model.UserProductId;
 import uk.doneby.igt.model.UserRecipe;
 import uk.doneby.igt.model.UserRecipeId;
 import uk.doneby.igt.repository.NutritionalInfoRepository;
@@ -39,7 +37,7 @@ import uk.doneby.igt.repository.RecipeNutritionalInfoRepository;
 import uk.doneby.igt.repository.RecipeProductRepository;
 import uk.doneby.igt.repository.RecipeRepository;
 import uk.doneby.igt.repository.UserRecipeRepository;
-import uk.doneby.igt.repository.UserRepository;
+import uk.doneby.igt.service.RecipeService;
 import uk.doneby.igt.service.StorageService;
 
 
@@ -71,6 +69,10 @@ public class RecipeController {
 	@Autowired
 	private StorageService storageService;
 	
+	@Autowired
+	private RecipeService recipeService;
+	
+	
 	@GetMapping("/user")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<Recipe>> getUserRecipes() {
@@ -89,6 +91,14 @@ public class RecipeController {
 		recipe.setNutritionalInfo(info);
 	}
 	
+	@GetMapping("/nutrition-list")
+    public ResponseEntity<List<NutritionalInfo>> getAllNutritionalInfo() {
+		List<NutritionalInfo> nutritionalInfo = new ArrayList<NutritionalInfo>();
+		nutritionalInfoRepository.findAll().forEach(nutritionalInfo::add);
+		
+		return new ResponseEntity<List<NutritionalInfo>>(nutritionalInfo, HttpStatus.OK);
+    }
+	
 	@GetMapping("/featured")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<Recipe>> getFeaturedRecipes() {
@@ -104,16 +114,39 @@ public class RecipeController {
 	@PostMapping("/add-image")
     public ResponseEntity<String> saveImage(MultipartFile image) throws IOException {
 		String filename = storageService.store(image);
-    	System.out.println(filename);
 		return new ResponseEntity<String>(filename, HttpStatus.OK);
 	}
+	
+
+	@PostMapping("/like")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Boolean> like(@RequestBody Long recipeId) {
+		System.out.println("***RECIPE_ID: " + recipeId);
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		boolean result = recipeService.like(recipeId, user.getId());
+		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{recipeId}")
+    public ResponseEntity<Recipe> getRecipe(@PathVariable("recipeId") Long recipeId) {
+		Recipe recipe = recipeRepository.findOne(recipeId);
+		recipe.setProducts(recipeProductRepository.getRecipeProducts(recipe.getId()));
+		return new ResponseEntity<Recipe>(recipe, HttpStatus.OK);
+	}
+	
 	
 	@PostMapping("/add")
 	@PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Recipe> saveNewRecipe(@RequestBody Recipe recipe) {
     	User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	List<Product> products = recipe.getProducts();
+    	
     	List<NutritionalInfo> nutritionalInfoList = recipe.getNutritionalInfo();
+    	Map<String, NutritionalInfo> nutritionalInfoMap = new HashMap<String, NutritionalInfo>();
+    	nutritionalInfoList.stream().forEach(nutrInfo ->  nutritionalInfoMap.put(nutrInfo.getName(), nutrInfo));
+    	
+//    	recipe.setCreatedBy(user.getId());
+//    	recipe.setModifiedByUser(user.getId());
     	recipe = recipeRepository.save(recipe);
     	UserRecipe userRecipe = new UserRecipe(user, recipe); 
     	userRecipeRepository.save(userRecipe);
@@ -121,17 +154,23 @@ public class RecipeController {
     	for(Product product: products) {
     		Product existingProduct = productRepository.findByName(product.getName());
     		if(existingProduct == null) {
-    			product = productRepository.save(product);
+    			existingProduct = productRepository.save(product);
     		}
-    		RecipeProduct recipeProduct = new RecipeProduct(recipe, product, product.getQuantity());
+    		RecipeProduct recipeProduct = new RecipeProduct(recipe, existingProduct, product.getQuantity());
     		recipeProductRepository.save(recipeProduct);
     	}
+    
+    	List<String> nutritionalInfoNames = new ArrayList<String>();
+    	nutritionalInfoMap.keySet().forEach(nutritionalInfoNames::add);
     	
-    	List<String> nutritionNames = nutritionalInfoList.stream().map(nutrInfo ->  nutrInfo.getName()).collect(Collectors.toList());
-    	nutritionalInfoList = nutritionalInfoRepository.findByNameIn(nutritionNames);
-//    	for(NutritionalInfo nutritionalInfo: nutritionalInfoList) {
-//    		Recipe
-//    	}
+    	nutritionalInfoList = nutritionalInfoRepository.findByNameIn(nutritionalInfoNames);
+    	List<RecipeNutritionalInfo> recipeNutritionalInfoList = new ArrayList<RecipeNutritionalInfo>();
+    	for(NutritionalInfo nutritionalInfo: nutritionalInfoList) {
+    		NutritionalInfo nf = nutritionalInfoMap.get(nutritionalInfo.getName());
+    		recipeNutritionalInfoList.add(new RecipeNutritionalInfo(recipe, nf, nf.getValue()));
+    	}
+    	
+    	recipeNutritionalInfoRepository.save(recipeNutritionalInfoList);
     	
     	
     	return new ResponseEntity<Recipe>(recipe, HttpStatus.OK);

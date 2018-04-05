@@ -5,15 +5,23 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="NUTRITIONAL_INFO")
-public class NutritionalInfo extends BaseModel implements Serializable {
+public class NutritionalInfo implements Serializable {
 	
 	private static final long serialVersionUID = -3019131035171401208L;
+	
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue
+	private Long id;
 
 	@Column(name="NAME", nullable = false, unique = true)
 	private String name;
@@ -21,7 +29,7 @@ public class NutritionalInfo extends BaseModel implements Serializable {
 	@Column(name="DESCRIPTION")
 	private String description;
 	
-	@Column(name="VALUE")
+	@Transient
 	private String value;
 	
 	public String getName() {
@@ -46,6 +54,14 @@ public class NutritionalInfo extends BaseModel implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

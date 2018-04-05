@@ -7,6 +7,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -41,14 +44,22 @@ public class Recipe extends BaseModel implements Serializable {
 	@Column(name="SERVINGS")
 	private int servings;
 	
+	@OneToMany(mappedBy = "recipe")
+	private List<RecipeComment> comments;
+	
 	@Transient
 	private List<NutritionalInfo> nutritionalInfo;
 		
 	@Column(name="FEATURED")
 	private boolean featured;
 	
-	@Column(name="LIKES")
-	private Long likes;
+	@ManyToMany
+	@JoinTable(
+		name="RECIPE_LIKES",
+		joinColumns=@JoinColumn(name="RECIPE_ID", referencedColumnName="ID"),
+		inverseJoinColumns=@JoinColumn(name="USER_ID", referencedColumnName="ID"))
+	private List<User> likes;
+	
 	
 	@Column(name="VIEWS")
 	private Long views;
@@ -156,6 +167,30 @@ public class Recipe extends BaseModel implements Serializable {
 
 	public void setNutritionalInfo(List<NutritionalInfo> nutritionalInfo) {
 		this.nutritionalInfo = nutritionalInfo;
+	}
+
+	public List<RecipeComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<RecipeComment> comments) {
+		this.comments = comments;
+	}
+
+	public List<User> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(List<User> likes) {
+		this.likes = likes;
+	}
+
+	public Long getViews() {
+		return views;
+	}
+
+	public void setViews(Long views) {
+		this.views = views;
 	}
 
 }

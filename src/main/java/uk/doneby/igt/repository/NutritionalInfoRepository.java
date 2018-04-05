@@ -1,5 +1,7 @@
 package uk.doneby.igt.repository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +20,7 @@ import uk.doneby.igt.model.RecipeNutritionalInfoId;
 		itemResourceRel="nutrition")
 public interface NutritionalInfoRepository extends PagingAndSortingRepository<NutritionalInfo, Long> {
 		
-	public List<NutritionalInfo> findByNameIn(@Param("names") List<String> names);
-	
+	public List<NutritionalInfo> findByNameIn(@Param("names") Collection<String> names);
+		
 	
 }

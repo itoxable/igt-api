@@ -18,7 +18,7 @@ import uk.doneby.igt.model.RecipeNutritionalInfoId;
 		itemResourceRel="recipe-nutrition")
 public interface RecipeNutritionalInfoRepository extends PagingAndSortingRepository<RecipeNutritionalInfo, RecipeNutritionalInfoId> {
 		
-	@Query("SELECT rn.recipe FROM NutritionalInfo rn where rn.id.recipeId = :recipeId")
+	@Query("SELECT rn.nutritionalInfo FROM RecipeNutritionalInfo rn where rn.id.recipeId = :recipeId")
 	public List<NutritionalInfo> findByRecipeId(@Param("recipeId") Long recipeId);
 	
 	
